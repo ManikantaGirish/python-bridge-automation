@@ -1,0 +1,14 @@
+# Python Bridge for Production Automation - Dependencies
+# Install: pip install -r requirements.txt
+
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+seleniumbase==4.23.3
+requests==2.31.0
+python-multipart==0.0.6
+
+# Optional: For enhanced browser automation
+undetected-chromedriver==3.5.5
+webdriver-manager==4.0.1
+Hyper Icon
