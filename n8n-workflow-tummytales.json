@@ -1,0 +1,133 @@
+{
+  "name": "TummyTales Automated Testing",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.PYTHON_BRIDGE_URL}}/execute-test",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "test_id",
+              "value": "TUMMY-001"
+            },
+            {
+              "name": "url",
+              "value": "https://tummytales.info"
+            },
+            {
+              "name": "browser",
+              "value": "chrome"
+            },
+            {
+              "name": "headless",
+              "value": true
+            },
+            {
+              "name": "webhook_url",
+              "value": "={{$node.Webhook.context.webhookUrl}}"
+            },
+            {
+              "name": "steps",
+              "value": "=[{\"action\":\"open_url\",\"value\":\"https://tummytales.info\"},{\"action\":\"verify\",\"selector\":\"body\",\"value\":\"TummyTales\",\"timeout\":10},{\"action\":\"screenshot\"}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Python Bridge - Execute Test",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-results",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook - Results",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": "={{$env.GOOGLE_SHEET_ID}}",
+        "sheetName": "TestResults",
+        "columns": {
+          "mappingsUi": {
+            "values": [
+              {
+                "column": "Test ID",
+                "value": "={{$json.test_id}}"
+              },
+              {
+                "column": "Status",
+                "value": "={{$json.status}}"
+              },
+              {
+                "column": "Duration",
+                "value": "={{$json.duration}}"
+              },
+              {
+                "column": "Steps Executed",
+                "value": "={{$json.steps_executed}}"
+              },
+              {
+                "column": "Steps Passed",
+                "value": "={{$json.steps_passed}}"
+              },
+              {
+                "column": "Timestamp",
+                "value": "={{$json.timestamp}}"
+              }
+            ]
+          }
+        },
+        "options": {}
+      },
+      "name": "Google Sheets - Save Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Python Bridge - Execute Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Results": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Save Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
