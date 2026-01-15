@@ -11,4 +11,3 @@ python-multipart==0.0.6
 # Optional: For enhanced browser automation
 undetected-chromedriver==3.5.5
 webdriver-manager==4.0.1
-Hyper Icon
