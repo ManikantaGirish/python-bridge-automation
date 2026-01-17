@@ -122,8 +122,8 @@ class SeleniumExecutor:
         if step.action == "open_url":
             url = step.value or step.selector
             self.driver.get(url)
-            self.driver.wait_for_ready_state_complete()
-            
+            # Wait for page to load completely
+            time.sleep(1)  # Simple wait for page load            
         elif step.action == "click":
             if not step.selector:
                 raise ValueError("Selector is required for click action")
