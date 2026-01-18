@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from seleniumbase import Driver
+from selenium import webdriver  # For LambdaTest RemoteWebDriver
 import time
 import os
 import uuid
@@ -236,7 +237,7 @@ async def execute_test(request: TestRequest, background_tasks: BackgroundTasks):
         # Open initial URL
         logger.info(f"Opening URL: {request.url}")
         driver.get(request.url)
-        driver.wait_for_ready_state_complete()
+#         driver.wait_for_ready_state_complete()
         
         # Execute all steps
         detailed_results = []
