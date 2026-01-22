@@ -10,6 +10,9 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from seleniumbase import Driver
 from selenium import webdriver  # For LambdaTest RemoteWebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 import os
 import uuid
@@ -128,19 +131,19 @@ class SeleniumExecutor:
         elif step.action == "click":
             if not step.selector:
                 raise ValueError("Selector is required for click action")
-            self.driver.wait_for_element_visible(step.selector, timeout=step.timeout)
+            WebDriverWait(self.driver, step.timeout or 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, step.selector)))
             self.driver.click(step.selector)
             
         elif step.action == "type_text":
             if not step.selector or not step.value:
                 raise ValueError("Selector and value are required for type_text action")
-            self.driver.wait_for_element_visible(step.selector, timeout=step.timeout)
+            WebDriverWait(self.driver, step.timeout or 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, step.selector)))
             self.driver.type(step.selector, step.value)
             
         elif step.action == "verify":
             if not step.selector:
                 raise ValueError("Selector is required for verify action")
-            element = self.driver.wait_for_element_visible(step.selector, timeout=step.timeout)
+            element = WebDriverWait(self.driver, step.timeout or 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, step.selector)))
             if step.value:
                 element_text = element.text
                 if step.value not in element_text:
